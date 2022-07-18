@@ -1,0 +1,60 @@
+    /**
+     * Inserts the given {@code T} in the {@code Queue<T>} sorted according to
+     * the given {@code Comparator<T>} and maintains the {@code Queue<T>}
+     * sorted.
+     *
+     * @param <T>
+     *            type of {@code Queue} entries
+     * @param q
+     *            the {@code Queue} to insert into
+     * @param x
+     *            the {@code T} to insert
+     * @param order
+     *            the {@code Comparator} defining the order for {@code T}
+     * @updates q
+     * @requires <pre>
+     * IS_TOTAL_PREORDER([relation computed by order.compare method])  and
+     * IS_SORTED(q, [relation computed by order.compare method])
+     * </pre>
+     * @ensures <pre>
+     * perms(q, #q * <x>)  and
+     * IS_SORTED(q, [relation computed by order.compare method])
+     * </pre>
+     */
+    private static <T> void insertInOrder(Queue<T> q, T x,
+            Comparator<T> order) {
+        Queue<T> temp = new Queue2<T>();
+        T tempT;
+        for (int i = 0; i < q.length(); i++) {
+            tempT = q.dequeue();
+
+            if (order.compare(x, tempT) < 0) {
+                temp.enqueue(x);
+            }
+            temp.enqueue(tempT);
+        }
+        q.transferFrom(temp);
+    }
+
+    /**
+     * Sorts {@code this} according to the ordering provided by the
+     * {@code compare} method from {@code order}.
+     *
+     * @param order
+     *            ordering by which to sort
+     * @updates this
+     * @requires IS_TOTAL_PREORDER([relation computed by order.compare method])
+     * @ensures <pre>
+     * perms(this, #this)  and
+     * IS_SORTED(this, [relation computed by order.compare method])
+     * </pre>
+     */
+    public void sort(Comparator<T> order) {
+        Queue<T> temp = this.newInstance();
+        T tempT;
+        for (int i = 0; i < this.length(); i++) {
+            tempT = this.dequeue();
+            insertInOrder(this, tempT, order);
+            this.enqueue(tempT);
+        }
+    }

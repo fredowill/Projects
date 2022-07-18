@@ -1,0 +1,351 @@
+import java.util.*;
+import java.io.*;
+
+/**
+ * Program that reads an input file from the user and outputs it into a HTML
+ * file displaying the number of times a distinct word occurred within the file
+ * and then displaying that word using a unique font accordingly to the its
+ * number of occurrences and this time instead of doing it with OSU components
+ * using JAVA FRAMEWORK like FileReader/BufferedReader and FileWriter/
+ * BufferedWriter/PrintWriter components for all the file input and output
+ *
+ *
+ * @author Ephratah Meskel and Krutin Shukla
+ *
+ */
+public final class TagCloudWithJava {
+
+    /**
+     * Private constructor so this utility class cannot be instantiated.
+     */
+    private TagCloudWithJava() {
+    }
+
+    private static final int lowValue = 11;
+
+    private static final int valueDist = 38;
+
+    private static final int specialCase = 49;
+
+    /**
+     *
+     *
+     * @param input
+     *            the input stream
+     * @param m
+     *            words --> amount of times they've appeared
+     * @param separatorSet
+     *            a set filled with characters that are considered separators
+     * @throws IOException 
+     * @updates m
+     * @requires input is a valid text file, |input| > 0
+     * @ensures for m, k--> words, v--> counts
+     */
+    private static void tokenizer(BufferedReader input, Map<String, Integer> m,
+            Set<Character> separatorSet, String separatorStr) throws IOException {
+
+    	String currentLine = input.readLine();
+        while (currentLine!=null) {
+            int position = 0;
+
+            while (position < currentLine.length()) {
+                String token = nextWordOrSeparator(currentLine, position,
+                        separatorStr);
+                char c = token.charAt(0);
+                if (!separatorSet.contains(c)) {
+                    //changes all tokens to be lowercase
+                    token = token.toLowerCase();
+                    if (m.containsKey(token)) {
+                        int num = m.get(token) + 1;
+                        m.remove(token);
+                        m.put(token, num);
+                    } else {
+                        m.put(token, 1);
+                    }                
+                    
+                }
+                position += token.length();
+            }
+            
+           currentLine = input.readLine();
+        }
+
+    }
+
+    /**
+     * Returns the first "word" (maximal length string of characters not in
+     * {@code separators}) or "separator string" (maximal length string of
+     * characters in {@code separators}) in the given {@code text} starting at
+     * the given {@code position}.
+     *
+     * @param text
+     *            the {@code String} from which to get the word or separator
+     *            string
+     * @param position
+     *            the starting index
+     * @param separators
+     *            the {@code Set} of separator characters
+     * @return the first word or separator string found in {@code text} starting
+     *         at index {@code position}
+     * @requires 0 <= position < |text|
+     * @ensures <pre>
+     * nextWordOrSeparator =
+     *   text[position, position + |nextWordOrSeparator|)  and
+     * if entries(text[position, position + 1)) intersection separators = {}
+     * then
+     *   entries(nextWordOrSeparator) intersection separators = {}  and
+     *   (position + |nextWordOrSeparator| = |text|  or
+     *    entries(text[position, position + |nextWordOrSeparator| + 1))
+     *      intersection separators /= {})
+     * else
+     *   entries(nextWordOrSeparator) is subset of separators  and
+     *   (position + |nextWordOrSeparator| = |text|  or
+     *    entries(text[position, position + |nextWordOrSeparator| + 1))
+     *      is not subset of separators)
+     * </pre>
+     */
+    private static String nextWordOrSeparator(String text, int position,
+            String separators) {
+        assert text != null : "Violation of: text is not null";
+        assert separators != null : "Violation of: separators is not null";
+        assert 0 <= position : "Violation of: 0 <= position";
+        assert position < text.length() : "Violation of: position < |text|";
+        
+        boolean sep = separators.indexOf(text.charAt(position)) >= 0;
+        int temp = position;
+        while(temp < text.length() && (separators.indexOf(text.charAt(temp)) >= 0) == sep){
+        	temp++;
+        }
+        return text.substring(position, temp);
+    }
+
+    /**
+     * Generates the set of characters in the given {@code String} into the
+     * given {@code Set}.
+     *
+     * @param str
+     *            the given {@code String}
+     * @param charSet
+     *            the {@code Set} to be replaced
+     * @replaces charSet
+     * @ensures charSet = entries(str)
+     */
+    public static void generateElements(String str, Set<Character> charSet) {
+        assert str != null : "Violation of: str is not null";
+        assert charSet != null : "Violation of: charSet is not null";
+
+        int size = str.length();
+        for (int i = 0; i < size; i++) {
+            char tempStr = str.charAt(i);
+            if (!charSet.contains(tempStr)) {
+                charSet.add(tempStr);
+            }
+
+        }
+    }
+
+    public static List<Map.Pair<String, Integer>> machineMethod(
+            SortingMachine<Map.Pair<String, Integer>> intMachine, int n,
+            Map<String, Integer> map,
+            SortingMachine<Map.Pair<String, Integer>> alphMachine,
+            NaturalNumber maxNN, NaturalNumber minNN) {
+        //two element array
+        int max = maxNN.toInt();
+        int min = minNN.toInt();
+
+        for (int i = 0; i < map.size(); i++) {
+            intMachine.add(map.removeAny());
+        }
+
+        intMachine.changeToExtractionMode();
+
+        for (int i = 0; i < n; i++) {
+            Map.Pair<String, Integer> elements = intMachine.removeFirst();
+            alphMachine.add(elements);
+
+            if (elements.value() < min) {
+                min = elements.value();
+            } else if (elements.value() > max) {
+                max = elements.value();
+            }
+        }
+
+        alphMachine.changeToExtractionMode();
+
+        List<Map.Pair<String, Integer>> finalOrder = new List1L<>();
+        for (int i = 0; i < n; i++) {
+            finalOrder.addRightFront(alphMachine.removeFirst());
+        }
+        maxNN.setFromInt(max);
+        minNN.setFromInt(min);
+        return finalOrder;
+    }
+
+    /**
+     * Prints out the w
+     *
+     * @param out
+     *            the output stream
+     * @param fileIn
+     *            the input stream
+     * @param in
+     *            the number of distinct words in the input source
+     * @param inputSc
+     *            the input source from the user
+     * @param list
+     *            map containing the distinct words from the input source and
+     *            the number of times they occur
+     * @param max
+     *            the highest number of occurrences contained in the map
+     * @param min
+     *            the lowest number of occurrences contained in the map
+     * @updates out.content
+     * @ensures out.content = #out.content * [the HTML "opening" tags]
+     */
+    /*
+     * I dont know what to change in this method either
+     */
+    private static void htmlGenerator(SimpleWriter out, int n, String inputSc,
+            List<Map.Pair<String, Integer>> list, NaturalNumber max,
+            NaturalNumber min) {
+        out.println("<!DOCTYPE html>");
+        out.println("<html lang=\'en\'>");
+        out.println("<head>");
+        out.println("<title>");
+        out.println("Top " + n + " words in " + inputSc);
+        out.println("</title>");
+        out.println("<link href=\"http://web.cse.ohio-state.edu/software/2231/"
+                + "web-sw2/assignments/projects/tag-cloud-generator/data/"
+                + "tagcloud.css\" rel=\"stylesheet\" type=\"text/css\">\r\n"
+                + "<link href=\"tagcloud.css\" rel=\"stylesheet\" type=\"text/css\">");
+        out.println("<body>");
+        out.println("<h2> Top " + n + " words in " + inputSc + "</h2>");
+        out.println("<div class ='cdiv'>");
+        out.println("<p class='cbox'>");
+
+        for (int i = 0; i < n; i++) {
+            Map.Pair<String, Integer> pair = list.removeRightFront();
+            int fValue = ((valueDist * (pair.value() - min.toInt()))
+                    / (max.toInt() - min.toInt())) + lowValue;
+            if (fValue == specialCase) {
+                fValue--;
+            }
+            out.println("<span style='cursor:default' class='f" + fValue + "' "
+                    + "title='count: " + pair.value() + "'>" + pair.key()
+                    + "</span>");
+        }
+        out.println("</p>");
+        out.println("</div>");
+        out.println("</body>");
+        out.println("</html>");
+
+    }
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Main method.
+     *
+     * @param args
+     *            the command line arguments
+     */
+    public static void main(String[] args) {
+    	
+    	//IO using java files
+    	BufferedReader input = new BufferedReader( new InputStreamReader(System.in));
+    	
+        //get file in and out location, as well as number of words to be used
+    	String fileInLocation = "", fileOutLocation = "";
+    	int numOfWords = -1;
+    	try {
+            System.out.println(
+                    "Enter a valid file location for the file you would like to use:");
+            fileInLocation = input.readLine();
+
+            System.out.println(
+                    "Enter a valid file for where you would like the output to be:");
+            fileOutLocation = input.readLine();
+
+            System.out.println("Enter a valid number of words you would like to include");
+            while(numOfWords < 0) {
+            	try {
+                    numOfWords = Integer.parseInt(input.readLine());
+                } catch (NumberFormatException e) {
+                   System.out.println("invalid input for number of words");
+                }
+            }
+        } catch (IOException e) {
+        	System.err.println("Error in reading the input");
+        	input.close();
+        	return;
+        }
+        
+        /*
+         * need to add something about the number of desired words
+         * both the TA said that if the desired number is more than the actual number
+         * than just print however many there are
+         */
+        
+
+        String separatorStr = " ,?;:!-.[]()\"";
+
+        Set<Character> separatorSet = new HashSet<Character>();
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        
+        generateElements(separatorStr, separatorSet);
+
+        BufferedReader textInput = new BufferedReader(new FileReader (fileInLocation));
+        PrintWriter textOutput = new PrintWriter( new BufferedWriter(new FileWriter(fileOutLocation)));
+
+        
+        /*
+         * I have no idea about what to do about all this until -------------------
+         * 
+         * TA said to use array list for sorting
+         */
+        tokenizer(textInput, map, separatorSet, separatorStr);
+
+        SortingMachine<Map.Pair<String, Integer>> intMac = new SortingMachine1L<Map.Pair<String, Integer>>(
+                new Comparator<Map.Pair<String, Integer>>() {
+                    @Override
+                    public int compare(Pair<String, Integer> o1,
+                            Pair<String, Integer> o2) {
+                        int comp = -(o1.value().compareTo(o2.value()));
+                        if (comp == 0) {
+                            comp = (o1.key().compareTo(o2.key()));
+                        }
+                        return comp;
+                    }
+                });
+
+        SortingMachine<Map.Pair<String, Integer>> alphMac = new SortingMachine1L<Map.Pair<String, Integer>>(
+                new Comparator<Map.Pair<String, Integer>>() {
+                    @Override
+                    public int compare(Pair<String, Integer> o1,
+                            Pair<String, Integer> o2) {
+
+                        return -(o1.key().compareTo(o2.key()));
+                    }
+                });
+        //----------------------------------------------------------------------------------------------------
+        
+        
+        int maxFreq = 0;
+        int minFreq = 0;
+        
+        /*
+         * dont know what to do about this either
+         */
+        List<Map.Pair<String, Integer>> list = machineMethod(intMac, numOfWords,
+                map, alphMac, maxFreq, minFreq);
+
+        htmlGenerator(textOutput, numOfWords, fileInLocation, list, maxFreq,
+                minFreq);
+        //-----------------------------------------------------------------------------------------------------
+        
+        
+        input.close();
+        textInput.close();
+        textOutput.close();
+    }
+
+}

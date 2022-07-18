@@ -1,0 +1,16 @@
+  1.)
+  
+        @Override
+        public int hashCode() {
+
+            int radix;
+            return Character.digit(this.toString(), radix);
+
+        }
+
+        
+  2.)
+  
+  I don't understand the first part of the homework, and the second is based of the first.
+  the hw tells us to use "Character.digit" but am I suppoesed to make radix assigned to a value? is radix just some random
+  constant.

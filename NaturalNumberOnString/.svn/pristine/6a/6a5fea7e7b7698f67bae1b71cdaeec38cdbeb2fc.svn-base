@@ -1,0 +1,234 @@
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+import components.naturalnumber.NaturalNumber;
+import components.naturalnumber.NaturalNumber2;
+
+/**
+ * JUnit test fixture for {@code NaturalNumber}'s constructors and kernel
+ * methods.
+ *
+ * @author Put your name here
+ *
+ */
+public abstract class NaturalNumberTest {
+
+    /**
+     * Invokes the appropriate {@code NaturalNumber} constructor for the
+     * implementation under test and returns the result.
+     *
+     * @return the new number
+     * @ensures constructorTest = 0
+     */
+    protected abstract NaturalNumber constructorTest();
+
+    /**
+     * Invokes the appropriate {@code NaturalNumber} constructor for the
+     * implementation under test and returns the result.
+     *
+     * @param i
+     *            {@code int} to initialize from
+     * @return the new number
+     * @requires i >= 0
+     * @ensures constructorTest = i
+     */
+    protected abstract NaturalNumber constructorTest(int i);
+
+    /**
+     * Invokes the appropriate {@code NaturalNumber} constructor for the
+     * implementation under test and returns the result.
+     *
+     * @param s
+     *            {@code String} to initialize from
+     * @return the new number
+     * @requires there exists n: NATURAL (s = TO_STRING(n))
+     * @ensures s = TO_STRING(constructorTest)
+     */
+    protected abstract NaturalNumber constructorTest(String s);
+
+    /**
+     * Invokes the appropriate {@code NaturalNumber} constructor for the
+     * implementation under test and returns the result.
+     *
+     * @param n
+     *            {@code NaturalNumber} to initialize from
+     * @return the new number
+     * @ensures constructorTest = n
+     */
+    protected abstract NaturalNumber constructorTest(NaturalNumber n);
+
+    /**
+     * Invokes the appropriate {@code NaturalNumber} constructor for the
+     * reference implementation and returns the result.
+     *
+     * @return the new number
+     * @ensures constructorRef = 0
+     */
+    protected abstract NaturalNumber constructorRef();
+
+    /**
+     * Invokes the appropriate {@code NaturalNumber} constructor for the
+     * reference implementation and returns the result.
+     *
+     * @param i
+     *            {@code int} to initialize from
+     * @return the new number
+     * @requires i >= 0
+     * @ensures constructorRef = i
+     */
+    protected abstract NaturalNumber constructorRef(int i);
+
+    /**
+     * Invokes the appropriate {@code NaturalNumber} constructor for the
+     * reference implementation and returns the result.
+     *
+     * @param s
+     *            {@code String} to initialize from
+     * @return the new number
+     * @requires there exists n: NATURAL (s = TO_STRING(n))
+     * @ensures s = TO_STRING(constructorRef)
+     */
+    protected abstract NaturalNumber constructorRef(String s);
+
+    /**
+     * Invokes the appropriate {@code NaturalNumber} constructor for the
+     * reference implementation and returns the result.
+     *
+     * @param n
+     *            {@code NaturalNumber} to initialize from
+     * @return the new number
+     * @ensures constructorRef = n
+     */
+    protected abstract NaturalNumber constructorRef(NaturalNumber n);
+
+    @Test
+    public void testConstructorNoArgs() {
+        /*
+         * Set up variables
+         */
+        NaturalNumber n = this.constructorTest();
+        NaturalNumber nExpected = this.constructorRef();
+        /*
+         * assert calls
+         */
+        assertEquals(n, nExpected);
+    }
+
+    @Test
+    public void testConstructorInt() {
+        /*
+         * Set up variables
+         */
+        NaturalNumber n = this.constructorTest(10);
+        NaturalNumber nExpected = this.constructorRef(10);
+        /*
+         * assert calls
+         */
+        assertEquals(n, nExpected);
+    }
+
+    @Test
+    public void testConstructorString() {
+        /*
+         * Set up variables
+         */
+        NaturalNumber n = this.constructorTest("123");
+        NaturalNumber nExpected = this.constructorRef("123");
+        /*
+         * assert calls
+         */
+        assertEquals(n, nExpected);
+    }
+
+    @Test
+    public void testConstructorNN() {
+        /*
+         * Set up variables
+         */
+        NaturalNumber check = new NaturalNumber2(120);
+        //making this natural number to pass the test a natural number
+        NaturalNumber n = this.constructorTest(check);
+        NaturalNumber nExpected = this.constructorRef(check);
+        /*
+         * assert calls
+         */
+        assertEquals(n, nExpected);
+    }
+
+    @Test
+    public void testMultiplyBy10() {
+        /*
+         * Set up variables
+         */
+        NaturalNumber n = this.constructorTest(10);
+        NaturalNumber nExpected = this.constructorRef(10);
+        /*
+         * call method under test
+         */
+        n.multiplyBy10(2);
+        nExpected.multiplyBy10(2);
+        /*
+         * assert calls
+         */
+        assertEquals(n, nExpected);
+    }
+
+    @Test
+    public void testDivideBy10() {
+        /*
+         * Set up variables
+         */
+        NaturalNumber n = this.constructorTest(123);
+        NaturalNumber nExpected = this.constructorRef(123);
+        /*
+         * call method under test
+         */
+        int temp = n.divideBy10();
+        int tempExpected = nExpected.divideBy10();
+        /*
+         * assert calls
+         */
+        assertEquals(n, nExpected);
+        assertEquals(temp, tempExpected);
+    }
+
+    @Test
+    public void testIsZeroTrue() {
+        /*
+         * Set up variables
+         */
+        NaturalNumber n = this.constructorTest(10);
+        NaturalNumber nExpected = this.constructorRef(10);
+        /*
+         * call method under test
+         */
+        boolean ans = n.isZero();
+        boolean ansExpected = nExpected.isZero();
+        /*
+         * assert calls
+         */
+        assertEquals(n, nExpected);
+        assertEquals(ans, ansExpected);
+    }
+
+    @Test
+    public void testIsZeroFalse() {
+        /*
+         * Set up variables
+         */
+        NaturalNumber n = this.constructorTest();
+        NaturalNumber nExpected = this.constructorRef();
+        /*
+         * call method under test
+         */
+        boolean ans = n.isZero();
+        boolean ansExpected = nExpected.isZero();
+        /*
+         * assert calls
+         */
+        assertEquals(n, nExpected);
+        assertEquals(ans, ansExpected);
+    }
+
+}
